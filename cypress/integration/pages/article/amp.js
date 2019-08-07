@@ -2,6 +2,7 @@ import config from '../../../support/config/services';
 import envConfig from '../../../support/config/envs';
 import appConfig from '../../../../src/app/lib/config/services';
 import describeForEuOnly from '../../../support/describeForEuOnly';
+import metadataTest from './tests/metadata';
 
 // TODO: Remove after https://github.com/bbc/simorgh/issues/2959
 const serviceHasFigure = service =>
@@ -18,43 +19,7 @@ Object.keys(config)
         cy.visit(`${config[service].pageTypes.articles}.amp`);
       });
 
-      it('Metadata', () => {
-        cy.request(`${config[service].pageTypes.articles}.json`).then(
-          ({ body }) => {
-            cy.get('meta[name="description"]').should(
-              'have.attr',
-              'content',
-              body.promo.summary || body.promo.headlines.seoHeadline,
-            );
-            cy.get('meta[name="og:title"]').should(
-              'have.attr',
-              'content',
-              body.promo.headlines.seoHeadline,
-            );
-            cy.get('meta[name="og:type"]').should(
-              'have.attr',
-              'content',
-              body.metadata.type,
-            );
-            cy.get('meta[name="article:published_time"]').should(
-              'have.attr',
-              'content',
-              new Date(body.metadata.firstPublished).toISOString(),
-            );
-            cy.get('meta[name="article:modified_time"]').should(
-              'have.attr',
-              'content',
-              new Date(body.metadata.lastPublished).toISOString(),
-            );
-
-            cy.get('html').should(
-              'have.attr',
-              'lang',
-              body.metadata.passport.language,
-            );
-          },
-        );
-      });
+      metadataTest(config[service].pageTypes.articles);
 
       describe('ATI', () => {
         it('should have an amp-analytics tag with the ati url', () => {
