@@ -1,8 +1,10 @@
 import config from '../../../support/config/services';
 import envConfig from '../../../support/config/envs';
-import appConfig from '../../../../src/app/lib/config/services';
 import describeForEuOnly from '../../../support/describeForEuOnly';
 import metadataTest from './tests/metadata';
+import htmlAttrsTest from './tests/htmlAttrs';
+import footerTest from './tests/footer';
+import bodyTest from './tests/body';
 
 // TODO: Remove after https://github.com/bbc/simorgh/issues/2959
 const serviceHasFigure = service =>
@@ -19,7 +21,10 @@ Object.keys(config)
         cy.visit(`${config[service].pageTypes.articles}.amp`);
       });
 
-      metadataTest(config[service].pageTypes.articles);
+      metadataTest(service);
+      htmlAttrsTest(service);
+      footerTest(service);
+      bodyTest(service);
 
       describe('ATI', () => {
         it('should have an amp-analytics tag with the ati url', () => {
@@ -48,17 +53,6 @@ Object.keys(config)
 
       it('should have AMP attribute', () => {
         cy.get('html').should('have.attr', 'amp');
-      });
-
-      it('should have lang and dir attributes', () => {
-        cy.request(`${config[service].pageTypes.articles}.json`).then(
-          ({ body }) => {
-            cy.hasHtmlLangDirAttributes({
-              lang: body.metadata.passport.language,
-              dir: appConfig[service].dir,
-            });
-          },
-        );
       });
 
       // TODO - Refactor or review this. Can it be a puppeteer test?
@@ -122,12 +116,6 @@ Object.keys(config)
               cy.get('amp-img').should('be.visible');
             });
         }
-      });
-
-      it('should include the canonical URL', () => {
-        cy.checkCanonicalURL(
-          `https://www.bbc.com${config[service].pageTypes.articles}`,
-        );
       });
     });
   });
