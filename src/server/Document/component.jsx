@@ -7,8 +7,8 @@ import ResourceHints from '../../app/components/ResourceHints';
 import IfAboveIE9 from '../../app/components/IfAboveIE9Comment';
 import MPulseBeacon from '../../app/containers/MPulseBeacon';
 import { DialContextProvider } from '../../app/contexts/DialContext';
+import documentPropTypes from '../../app/models/propTypes/document';
 
-/* eslint-disable react/prop-types */
 const Document = ({
   assets,
   assetOrigins,
@@ -101,6 +101,12 @@ const Document = ({
       </body>
     </html>
   );
+};
+
+Document.propTypes = documentPropTypes;
+
+Document.defaultProps = {
+  assetOrigins: [],
 };
 
 export default Document;
